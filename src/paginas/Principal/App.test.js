@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { findByText, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import App from './App';
@@ -30,8 +30,20 @@ describe('<App /> Component', () =>{
 
     userEvent.click(linkCardPage);
 
-    const cardPageTitle = await screen.findByText('Meus cartões') // find because is async.
+    const cardPageTitle = await screen.findByText('Meus cartões'); // find because is async.
 
     expect(cardPageTitle).toBeInTheDocument();
+  });
+
+  test('Must navigate to the page of investments', async () => {
+    render(<AppRoutes />, {wrapper: BrowserRouter});
+
+    const linkInvestmentPage = screen.getByText('Investimentos');
+    expect(linkInvestmentPage).toBeInTheDocument();
+
+    userEvent.click(linkInvestmentPage);
+
+    const investmentPageTitle = await screen.findByTestId('investimentos');
+    expect(investmentPageTitle).toBeInTheDocument();
   });
 });
