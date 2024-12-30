@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import App from './App';
+import AppRoutes from '../../routes';
 
 describe('<App /> Component', () =>{
   test('Must allow adding a transaction to a statement', () => {
@@ -19,5 +20,18 @@ describe('<App /> Component', () =>{
     const itemExtrato = screen.getByRole('listitem');
 
     expect(newTransaction).toContainElement(itemExtrato);
+  });
+
+  test('Must navigate to the page of the clicked link', async () => {
+    render(<AppRoutes />, {wrapper: BrowserRouter});
+
+    const linkCardPage = screen.getByText('Cartões');
+    expect(linkCardPage).toBeInTheDocument();
+
+    userEvent.click(linkCardPage);
+
+    const cardPageTitle = await screen.findByText('Meus cartões') // find because is async.
+
+    expect(cardPageTitle).toBeInTheDocument();
   });
 });
