@@ -18,7 +18,15 @@ const mockRequest = (response) => {
     setTimeout(() => {
       resolve({data: response});
     }, 200)
-  })
+  });
+}
+
+const mockErrorRequest = () => {
+  return new Promise ((_, reject) => {
+    setTimeout(() => {
+      reject();
+    }, 200);
+  });
 }
 
 describe('Requests to API', () => {
@@ -28,5 +36,14 @@ describe('Requests to API', () => {
     const transactions = await buscaTransacoes();
     expect(transactions).toEqual(mockTransactions);
     expect(api.get).toHaveBeenCalledWith('/transacoes');
-  })
-})
+  });
+
+  test('Must render a empty when the request fails.', async () => {
+    api.get.mockImplementation(() => mockErrorRequest());
+
+    const transactions = await buscaTransacoes();
+
+    expect(transactions).toEqual([]);
+    expect(api.get).toHaveBeenCalledWith('/transacoes');
+  });
+});
