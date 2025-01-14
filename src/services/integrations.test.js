@@ -1,15 +1,32 @@
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import App from '../paginas/Principal/App';
+import api from './api';
 import { buscaTransacoes } from './transacoes';
 
-describe('Requests to API', () => {
-  test('Must render a transation list', async () => {
-    const transations = await buscaTransacoes();
-    expect(transations).toHaveLength(3);
+jest.mock('./api');
 
-    render(<App />, { wrapper: BrowserRouter });
-    const transactionList = await screen.findAllByText('Novembro');
-    transactionList.forEach(currentTransaction => expect(currentTransaction).toBeInTheDocument());
-  });
+const mockTransactions = [
+  {
+    id: 1,
+    transacao: 'Depósito',
+    valor: '100',
+    data: '22/11/2022',
+    mes: 'Novembro',
+  },
+];
+
+const mockRequest = (response) => {
+  return new Promise ((resolve) => {
+    setTimeout(() => {
+      resolve({data: response});
+    }, 200)
+  })
+}
+
+describe('Requests to API', () => {
+  test('Must render a transaction list.', async () => {
+    api.get.mockImplementation(() => mockRequest(mockTransactions));
+
+    const transactions = await buscaTransacoes();
+    expect(transactions).toEqual(mockTransactions);
+    expect(api.get).toHaveBeenCalledWith('/transacoes');
+  })
 })
