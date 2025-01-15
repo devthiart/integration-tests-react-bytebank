@@ -35,6 +35,11 @@ const mockErrorRequest = () => {
   });
 }
 
+// Jest hook to clear mock data before each test. More about Jest's hooks: https://jestjs.io/docs/api#afterallfn-timeout
+beforeEach(() => {
+  api.get.mockClear();
+});
+
 describe('Requests to API', () => {
   test('Must render a transaction list.', async () => {
     api.get.mockImplementation(() => mockRequest(mockData.transacoes));
